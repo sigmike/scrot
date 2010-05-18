@@ -50,6 +50,8 @@ main(int argc,
 
   if (opt.focused)
     image = scrot_grab_focused();
+  else if (opt.window)
+    image = scrot_grab_window();
   else if (opt.select)
     image = scrot_sel_and_grab_image();
   else {
@@ -182,6 +184,21 @@ scrot_grab_focused(void)
 
   scrot_do_delay();
   XGetInputFocus(disp, &target, &ignored);
+  if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
+  scrot_nice_clip(&rx, &ry, &rw, &rh);
+  im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+  return im;
+}
+
+Imlib_Image
+scrot_grab_window(void)
+{
+  Imlib_Image im = NULL;
+  int rx = 0, ry = 0, rw = 0, rh = 0;
+  Window target = opt.window;
+  int ignored;
+
+  scrot_do_delay();
   if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
   scrot_nice_clip(&rx, &ry, &rw, &rh);
   im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
