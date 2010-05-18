@@ -168,10 +168,11 @@ scrot_exec_app(Imlib_Image image, struct tm *tm,
                char *filename_im, char *filename_thumb)
 {
   char *execstr;
+  int status;
 
   execstr = im_printf(opt.exec, tm, filename_im, filename_thumb, image);
-  system(execstr);
-  exit(0);
+  status = system(execstr);
+  exit(WEXITSTATUS(status));
 }
 
 Imlib_Image
@@ -395,7 +396,8 @@ scrot_get_geometry(Window target,
 
   /* get windowmanager frame of window */
   if (target != root) {
-    unsigned int d, x;
+    int x;
+    unsigned int d;
     int status;
     
     status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
