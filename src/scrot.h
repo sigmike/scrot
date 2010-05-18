@@ -72,7 +72,10 @@ void scrot_exec_app(Imlib_Image image, struct tm *tm,
                     char *filename_im, char *filename_thumb);
 void scrot_do_delay(void);
 Imlib_Image scrot_sel_and_grab_image(void);
+Imlib_Image scrot_grab_focused(void);
 void scrot_sel_area(int *x, int *y, int *w, int *h);
+void scrot_nice_clip(int *rx, int *ry, int *rw, int *rh);
+int scrot_get_geometry(Window target, int *rx, int *ry, int *rw, int *rh);
 Window scrot_get_window(Display *display,Window window,int x,int y);
 Window scrot_get_client_window(Display * display, Window target);
 Window scrot_find_window_by_property(Display * display, const Window window,
