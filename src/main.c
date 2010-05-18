@@ -175,15 +175,11 @@ scrot_exec_app(Imlib_Image image, struct tm *tm,
 }
 
 Imlib_Image
-scrot_grab_focused(void)
+scrot_grab_identified_window(Window target)
 {
   Imlib_Image im = NULL;
   int rx = 0, ry = 0, rw = 0, rh = 0;
-  Window target = None;
-  int ignored;
 
-  scrot_do_delay();
-  XGetInputFocus(disp, &target, &ignored);
   if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
   scrot_nice_clip(&rx, &ry, &rw, &rh);
   im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
@@ -191,18 +187,23 @@ scrot_grab_focused(void)
 }
 
 Imlib_Image
-scrot_grab_window(void)
+scrot_grab_focused(void)
 {
-  Imlib_Image im = NULL;
-  int rx = 0, ry = 0, rw = 0, rh = 0;
-  Window target = opt.window;
+  Window target = None;
   int ignored;
 
   scrot_do_delay();
-  if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
-  scrot_nice_clip(&rx, &ry, &rw, &rh);
-  im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
-  return im;
+  XGetInputFocus(disp, &target, &ignored);
+  return scrot_grab_identified_window(target);
+}
+
+Imlib_Image
+scrot_grab_window(void)
+{
+  Window target = opt.window;
+
+  scrot_do_delay();
+  return scrot_grab_identified_window(target);
 }
 
 Imlib_Image
